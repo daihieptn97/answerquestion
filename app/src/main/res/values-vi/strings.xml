@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">answer questions</string>
+    <string name="hintQuestion">Bạn đang phân vân gì ?</string>
+    <string name="tvHistory">Lịch sử</string>
+    <string name="tvLangue">Ngôn ngữ</string>
+    <string name="tvOthersQuestion">Câu hỏi khác</string>
+    <string name="tvUseName">Tên tài khoản</string>
+    <string name="tvQuestion">Câu hỏi</string>
+    <string name="errorLogin">Bạn đã nhập sai mật khẩu</string>
+    <string name="setErrorUsename">Bạn không được để trống trường này</string>
+    <string name="setErrorPassword">bạn không được để trống trường này</string>
+    <string name="setErrorQuestion">bạn không được để trống trường này</string>
+    <string name="successLogin">Tạo tài khoản thành công</string>
+    <string name="tvPassword">Mật Khẩu</string>
+    <string name="accountExits">Tên người dùng đó đã được sử dụng. Thử cái khác.</string>
+    <string name="btnCreateAccount">TẠO TÀI KHOẢN MỚI</string>
+    <string name="btnLogin">ĐĂNG NHẬP</string>
+    <string name="emptyDataHistory">Dữ liệu hiện tại trống</string>
+    <string name="hintConfirmYourPassword">Xác nhận mật khẩu của bạn</string>
+    <string name="hintPassword">Mật khẩu</string>
+    <string name="hintUsername">Tên đăng nhập</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="setErrorEmptyEditText">Dữ liệu hiện tại trống</string>
+    <string name="successCrateLogin">Tạo tài khoản thành công</string>
+    <string name="tilteOtherQuestion">Câu hỏi khác</string>
+    <string name="titleHistory">Lịch sử</string>
+    <string name="tvOrLogin">Hoặc</string>
+    <string name="warningNoConnect">KHông có kết nối</string>
+    <string name="dialog">Vui lòng chờ . . .</string>
+    <string name="warningInputText">"Vui lòng chỉ sử dụng chữ cái (a-z), số "</string>
+    <string name="warningLenghtText">Vui lòng sử dụng từ 6 đến 30 ký tự.</string>
+    <string name="setErrorRePassword">Các mật khẩu này không khớp. Thử lại?</string>
+
+</resources>

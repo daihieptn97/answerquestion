@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">answer questions</string>
+    <string name="tvUseName">Username</string>
+    <string name="tvLangue">Language</string>
+    <string name="tvPassword">Password</string>
+    <string name="tvQuestion">Y/N Question</string>
+    <string name="tvHistory">History</string>
+    <string name="tvOthersQuestion">Others Question</string>
+    <string name="titleHistory">History</string>
+
+    <string name="setErrorRePassword">These passwords do not match. Try again?</string>
+    <string name="setErrorPassword">Please enter an Password</string>
+    <string name="setErrorEmptyEditText">Current data is empty</string>
+    <string name="setErrorUsename">Please enter an Username</string>
+    <string name="setErrorQuestion">Please enter an question</string>
+    <string name="errorLogin">Account name or password is incorrect</string>
+    <string name="successCrateLogin">Create account successfully</string>
+    <string name="emptyDataHistory">Current data is empty</string>
+
+    <string name="hintQuestion">what are you thinking ?</string>
+    <string name="hintUsername">Username</string>
+    <string name="hintPassword">Password</string>
+    <string name="hintConfirmYourPassword">Confirm your password</string>
+
+    <string name="btnSubmit">Submit</string>
+    <string name="btnLogin">LOG IN</string>
+    <string name="btnCreateAccount">CREATE NEW APPNAME ACCOUNT</string>
+    <string name="tvOrLogin">OR</string>
+    <string name="logout">Logout</string>
+    <string name="accountExits">That username is taken. Try another.</string>
+    <string name="warningNoConnect">No connect</string>
+    <string name="tilteOtherQuestion">Other Question</string>
+
+    <string name="dialog">Please Wait . . .</string>
+    <string name="warningInputText">Please use only letters (a-z), numbers</string>
+    <string name="warningLenghtText">Please use between 6 and 30 characters.</string>
+
+</resources>
