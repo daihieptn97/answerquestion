@@ -1,6 +1,11 @@
 package com.k14bktpm.daihieptn97.answerquestions;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.io.IOException;
+import java.net.InetAddress;
 
 
 /**
@@ -9,6 +14,7 @@ import java.io.IOException;
 
 public class ConnectInternet {
     public static boolean isOnline() {
+
         Runtime runtime = Runtime.getRuntime();
         try {
             Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
@@ -23,3 +29,4 @@ public class ConnectInternet {
         return false;
     }
 }
+

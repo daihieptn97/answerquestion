@@ -64,7 +64,7 @@ public class CreateAccount extends AppCompatActivity {
                 try {
                     if (dataSnapshot.getValue().toString().length() > 0) {
                         tipUsename.setError(getResources().getString(R.string.accountExits));
-                        Toast.makeText(CreateAccount.this, getResources().getString(R.string.accountExits), Toast.LENGTH_SHORT).show();
+
 
                     }
                 } catch (Exception e) {
@@ -153,15 +153,21 @@ public class CreateAccount extends AppCompatActivity {
                 || !edtPassword.getText().toString().trim().matches(regexUsername)) {
             tipUsename.setError(getString(R.string.warningInputText));
             return false;
+        }else {
+            tipUsename.setError("");
         }
 
-        if (edtUsename.getText().toString().trim().length() < 5 && edtUsename.getText().toString().trim().length() > 30) {
+        if (edtUsename.getText().toString().trim().length() < 6 || edtUsename.getText().toString().trim().length() > 30) {
             tipUsename.setError(getString(R.string.warningLenghtText));
             return false;
+        }else{
+            tipUsename.setError("");
         }
-        if (edtPassword.getText().toString().trim().length() < 5 && edtPassword.getText().toString().trim().length() > 30) {
-            tipUsename.setError(getString(R.string.warningLenghtText));
+        if (edtPassword.getText().toString().trim().length() < 6 || edtPassword.getText().toString().trim().length() > 30) {
+            tipPassword.setError(getString(R.string.warningLenghtText));
             return false;
+        }else{
+            tipPassword.setError("");
         }
 
 

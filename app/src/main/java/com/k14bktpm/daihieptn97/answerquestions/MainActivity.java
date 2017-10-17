@@ -9,16 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
@@ -60,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView imgYes, imgNo;
     private Animation animHiddenLeft, animHiddenRight, aniMove, animDelay, animDelayUnder;
     private List<String> listLangues = new ArrayList<>();
-    private String mUsename;
-    private AdView mAdView;
+    private String mUsername;
     private InterstitialAd mInterstitialAd;
 
 
@@ -90,12 +85,15 @@ public class MainActivity extends AppCompatActivity {
         anhXa();
         setSpinner();
 
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-8955613125144237/2876700855");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         MobileAds.initialize(getApplicationContext(),
-                "ca-app-pub-3940256099942544/6300978111"); // quang cao dang bannner
+                "ca-app-pub-8955613125144237/2876700855"); // quang cao dang bannner
 
-        mAdView = (AdView) findViewById(R.id.adView);
+        AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
@@ -106,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+                mInterstitialAd.show();
+                onSubmit();
+                if (!ConnectInternet.isOnline())
+                    Toasty.warning(MainActivity.this, getString(R.string.noConnectbtnSubmit), Toast.LENGTH_LONG).show();
 
-                if (ConnectInternet.isOnline()) onSubmit();
-                else
-                    Toasty.error(MainActivity.this, getString(R.string.warningNoConnect), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -126,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         tvOthersQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mInterstitialAd.show();
 
                 if (ConnectInternet.isOnline()) onOrtherQuestion();
                 else
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
     private void onOrtherQuestion() {
 
         Intent intent = new Intent(MainActivity.this, OtherQuestion.class);
-        intent.putExtra("Email", mUsename);
+        intent.putExtra("Email", mUsername);
         intent.putExtra("Language", listLangues.get(spinner.getSelectedItemPosition()));
         startActivity(intent);
     }
@@ -151,12 +151,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void getIntentdata() {
         Intent intent = getIntent();
-        mUsename = intent.getStringExtra("Username");
+        mUsername = intent.getStringExtra("Username");
     }
 
     public void onHistory() {
         Intent intent = new Intent(MainActivity.this, History.class);
-        intent.putExtra("Email", mUsename);
+        intent.putExtra("Email", mUsername);
         intent.putExtra("Language", listLangues.get(spinner.getSelectedItemPosition()));
         startActivity(intent);
     }
@@ -167,30 +167,34 @@ public class MainActivity extends AppCompatActivity {
             imgYes.animate().setDuration(5);
             imgNo.setVisibility(View.VISIBLE);
             imgNo.animate().setDuration(5);
-
-
             imgNo.startAnimation(animDelay);
             imgYes.startAnimation(animDelayUnder);
-
             Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mDatabase.child("NguoiDung").child(mUsename).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            upLoadData();
-                        }
+            if (ConnectInternet.isOnline()) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDatabase.child("NguoiDung").child(mUsername).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                upLoadData();
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
-                }
-            }, 5000);
-
-
+                            }
+                        });
+                    }
+                }, 4000);
+            } else {
+               handler.postDelayed(new Runnable() {
+                   @Override
+                   public void run() {
+                       upLoadData();
+                   }
+               },4000);
+            }
         }
 
     }
@@ -227,11 +231,11 @@ public class MainActivity extends AppCompatActivity {
             imgNo.setVisibility(View.GONE);
 
         }
-
-
-        mDatabase.child("Question").child(listLangues.get(spinner.getSelectedItemPosition()) + "").child(mUsename).push().setValue(question);
-        edtQuestion.setHint(edtQuestion.getText().toString().trim());
-        edtQuestion.setText("");
+        if (ConnectInternet.isOnline()) {
+            mDatabase.child("Question").child(listLangues.get(spinner.getSelectedItemPosition()) + "").child(mUsername).push().setValue(question);
+            edtQuestion.setHint(edtQuestion.getText().toString().trim());
+            edtQuestion.setText("");
+        }
     }
 
     public int randomAnsers() {
@@ -244,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         listLangues.add("English");
         listLangues.add("Tiếng Việt");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listLangues);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listLangues);
         spinner.setAdapter(adapter);
         if (Locale.getDefault().getLanguage().equals("vi")) {
             spinner.setSelection(1);

@@ -31,5 +31,6 @@
     <string name="warningInputText">"Vui lòng chỉ sử dụng chữ cái (a-z), số "</string>
     <string name="warningLenghtText">Vui lòng sử dụng từ 6 đến 30 ký tự.</string>
     <string name="setErrorRePassword">Các mật khẩu này không khớp. Thử lại?</string>
+    <string name="noConnectbtnSubmit">không có kết nối mạng, Lịch sử xẽ không được lưu lại</string>
 
 </resources>

@@ -34,5 +34,6 @@
     <string name="dialog">Please Wait . . .</string>
     <string name="warningInputText">Please use only letters (a-z), numbers</string>
     <string name="warningLenghtText">Please use between 6 and 30 characters.</string>
+    <string name="noConnectbtnSubmit">No data connections will not be stored</string>
 
 </resources>
