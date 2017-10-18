@@ -64,10 +64,8 @@ public class Login extends AppCompatActivity {
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
                 Intent intent = new Intent(Login.this, CreateAccount.class);
                 startActivity(intent);
-                finish();
             }
         });
 

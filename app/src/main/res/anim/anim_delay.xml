@@ -3,9 +3,11 @@
     android:fillAfter="false">
 
     <alpha
-        android:duration="300"
+        android:duration="500"
         android:fromAlpha="1"
         android:repeatCount="infinite"
-        android:repeatMode="reverse"
+        android:repeatMode="restart"
         android:toAlpha="0" />
+    <translate
+        android:duration="1500" />
 </set>

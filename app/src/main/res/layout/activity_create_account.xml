@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
+    android:paddingLeft="14dp"
+    android:paddingRight="14dp"
     tools:context="com.k14bktpm.daihieptn97.answerquestions.DangNhap.CreateAccount">
 
     <ImageView

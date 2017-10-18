@@ -6,7 +6,7 @@
     <string name="tvLangue">Ngôn ngữ</string>
     <string name="tvOthersQuestion">Câu hỏi khác</string>
     <string name="tvUseName">Tên tài khoản</string>
-    <string name="tvQuestion">Câu hỏi</string>
+    <string name="tvQuestion">Bạn đang phân vân gì ?</string>
     <string name="errorLogin">Bạn đã nhập sai mật khẩu</string>
     <string name="setErrorUsename">Bạn không được để trống trường này</string>
     <string name="setErrorPassword">bạn không được để trống trường này</string>
@@ -26,7 +26,7 @@
     <string name="tilteOtherQuestion">Câu hỏi khác</string>
     <string name="titleHistory">Lịch sử</string>
     <string name="tvOrLogin">Hoặc</string>
-    <string name="warningNoConnect">KHông có kết nối</string>
+    <string name="warningNoConnect">Không có kết nối</string>
     <string name="dialog">Vui lòng chờ . . .</string>
     <string name="warningInputText">"Vui lòng chỉ sử dụng chữ cái (a-z), số "</string>
     <string name="warningLenghtText">Vui lòng sử dụng từ 6 đến 30 ký tự.</string>

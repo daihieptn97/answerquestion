@@ -23,7 +23,14 @@ import com.k14bktpm.daihieptn97.answerquestions.History;
 import com.k14bktpm.daihieptn97.answerquestions.R;
 
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -41,7 +48,7 @@ public class OtherQuestion extends AppCompatActivity {
     private ListView lvOtherQuestion;
     private SpotsDialog dialog;
     private SwipeRefreshLayout refreshLayout;
-    private ArrayList<OjectOtherQuseston> listOtherRandom = new ArrayList<>();
+   // private ArrayList<OjectOtherQuseston> listOtherRandom = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +83,10 @@ public class OtherQuestion extends AppCompatActivity {
         lvOtherQuestion.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(OtherQuestion.this, "position : " + i, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(OtherQuestion.this, "position : " + i, Toast.LENGTH_SHORT).show();
 
-                OjectOtherQuseston ojectOtherQuseston = listOtherRandom.get(i);
-                Log.d("usename ", ojectOtherQuseston.getmUsename());
+                OjectOtherQuseston ojectOtherQuseston = listOtherQuestion.get(i);
+                //Log.d("usename ", ojectOtherQuseston.getmUsename());
 
                 Intent intent = new Intent(OtherQuestion.this, History.class);
                 intent.putExtra("Email", ojectOtherQuseston.getmUsename());
@@ -92,47 +99,29 @@ public class OtherQuestion extends AppCompatActivity {
     }
 
     private void Load() {
-        listOtherRandom.clear();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ListIterator<OjectOtherQuseston> iterator = listOtherQuestion.listIterator();
-                List<Integer> listLocation = new ArrayList<Integer>();
-                Random random = new Random();
-                int dem = 0;
-                int i = 0;
 
-                while (dem <= 35) {
-                    if (i == listOtherQuestion.size()) break;
-                    int temp = random.nextInt(listOtherQuestion.size());
-                    if (!listLocation.contains(temp)) {
-                        listLocation.add(temp);
-                        dem++;
+                Collections.sort(listOtherQuestion, new Comparator<OjectOtherQuseston>() { // sap xep araylist
+                    @Override
+                    public int compare(OjectOtherQuseston o1, OjectOtherQuseston o2) {
+                        return o2.getThoiGianDang().compareTo(o1.getThoiGianDang());
                     }
-                    i++;
-                }
-
-                int j = 0;
-                while (iterator.hasNext()) {
-                    if (j == 34) break;
-                    if (j == listLocation.size() - 1) break;
-
-                    int a = listLocation.get(j);
-                    OjectOtherQuseston b = listOtherQuestion.get(a);
-                    listOtherRandom.add(b);
-                    j++;
-                }
+                });
 
                 if (listOtherQuestion.size() == 0)
                     Toasty.warning(OtherQuestion.this, getResources().getString(R.string.emptyDataHistory), Toast.LENGTH_SHORT).show();
-                adpterListView = new adpter_otherQuestion(listOtherRandom, OtherQuestion.this, R.layout.adapter_other_queston);
+                adpterListView = new adpter_otherQuestion(listOtherQuestion, OtherQuestion.this, R.layout.adapter_other_queston);
                 lvOtherQuestion.setAdapter(adpterListView);
                 adpterListView.notifyDataSetChanged();
                 dialog.dismiss();
             }
-        }, 1500);
+        }, 3000);
     }
+
+
 
 
     private void LoadDataFirebase() {
@@ -151,7 +140,17 @@ public class OtherQuestion extends AppCompatActivity {
                             OjectOtherQuseston ojectOtherQuseston = dataSnapshot.getValue(OjectOtherQuseston.class);
                             ojectOtherQuseston.setmUsename(snapshot.getKey());
 
+                            Date startDate;
+                            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                            try {
+                                startDate = df.parse(ojectOtherQuseston.getTime());
+                                ojectOtherQuseston.setThoiGianDang(startDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             listOtherQuestion.add(ojectOtherQuseston);
+
+
                         }
 
                         @Override
@@ -200,3 +199,47 @@ public class OtherQuestion extends AppCompatActivity {
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.reloadDataOtherQuestion);
     }
 }
+
+
+//    private void LoadRandom() {
+//        listOtherRandom.clear();
+//        Handler handler = new Handler();
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ListIterator<OjectOtherQuseston> iterator = listOtherQuestion.listIterator();
+//                List<Integer> listLocation = new ArrayList<Integer>();
+//                Random random = new Random();
+//                int dem = 0;
+//                int i = 0;
+//
+//                while (dem <= 35) {
+//                    if (i == listOtherQuestion.size()) break;
+//                    int temp = random.nextInt(listOtherQuestion.size());
+//                    if (!listLocation.contains(temp)) {
+//                        listLocation.add(temp);
+//                        dem++;
+//                    }
+//                    i++;
+//                }
+//
+//                int j = 0;
+//                while (iterator.hasNext()) {
+//                    if (j == 34) break;
+//                    if (j == listLocation.size() - 1) break;
+//
+//                    int a = listLocation.get(j);
+//                    OjectOtherQuseston b = listOtherQuestion.get(a);
+//                    listOtherRandom.add(b);
+//                    j++;
+//                }
+//
+//                if (listOtherQuestion.size() == 0)
+//                    Toasty.warning(OtherQuestion.this, getResources().getString(R.string.emptyDataHistory), Toast.LENGTH_SHORT).show();
+//                adpterListView = new adpter_otherQuestion(listOtherRandom, OtherQuestion.this, R.layout.adapter_other_queston);
+//                lvOtherQuestion.setAdapter(adpterListView);
+//                adpterListView.notifyDataSetChanged();
+//                dialog.dismiss();
+//            }
+//        }, 1500);
+//    }

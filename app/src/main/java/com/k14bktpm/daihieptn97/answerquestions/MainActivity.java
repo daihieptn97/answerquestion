@@ -84,12 +84,6 @@ public class MainActivity extends AppCompatActivity {
         getIntentdata();
         anhXa();
         setSpinner();
-
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-8955613125144237/2876700855");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-
-
         MobileAds.initialize(getApplicationContext(),
                 "ca-app-pub-8955613125144237/2876700855"); // quang cao dang bannner
 
@@ -97,25 +91,23 @@ public class MainActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        if (!ConnectInternet.isOnline())
+            Toasty.warning(MainActivity.this, getString(R.string.noConnectbtnSubmit), Toast.LENGTH_LONG).show();
+
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-
-                mInterstitialAd.show();
                 onSubmit();
-                if (!ConnectInternet.isOnline())
-                    Toasty.warning(MainActivity.this, getString(R.string.noConnectbtnSubmit), Toast.LENGTH_LONG).show();
-
+                //  demo();
             }
         });
 
         tvHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (ConnectInternet.isOnline()) onHistory();
                 else
                     Toasty.error(MainActivity.this, getString(R.string.warningNoConnect), Toast.LENGTH_SHORT).show();
@@ -125,14 +117,23 @@ public class MainActivity extends AppCompatActivity {
         tvOthersQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mInterstitialAd.show();
-
                 if (ConnectInternet.isOnline()) onOrtherQuestion();
                 else
                     Toasty.error(MainActivity.this, getString(R.string.warningNoConnect), Toast.LENGTH_SHORT).show();
             }
         });
     }
+//    int i = 0;
+//    private void demo(){
+//        if(i ==0 ) {
+//            imgYes.setVisibility(View.GONE);
+//            i = 1;
+//        }else {
+//            imgYes.setVisibility(View.VISIBLE);
+//            i =0;
+//        }
+//
+//    }
 
     private void onOrtherQuestion() {
 
@@ -164,12 +165,18 @@ public class MainActivity extends AppCompatActivity {
     public void onSubmit() {
         if (isEmptyInput() == 0) { // kiem tra neu tat ca deu da nhap thi bat dau chay
             imgYes.setVisibility(View.VISIBLE);
-            imgYes.animate().setDuration(5);
             imgNo.setVisibility(View.VISIBLE);
-            imgNo.animate().setDuration(5);
+
+
             imgNo.startAnimation(animDelay);
-            imgYes.startAnimation(animDelayUnder);
+
+           imgYes.startAnimation(animDelayUnder);
             Handler handler = new Handler();
+
+            String cauHoiChuanhoa = edtQuestion.getText().toString().trim(); // chuan hoa chuoi va them dau hoi cuoi cau
+            cauHoiChuanhoa = themDauHoi(cauHoiChuanhoa);
+            edtQuestion.setText(cauHoiChuanhoa);
+
             if (ConnectInternet.isOnline()) {
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -188,15 +195,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }, 4000);
             } else {
-               handler.postDelayed(new Runnable() {
-                   @Override
-                   public void run() {
-                       upLoadData();
-                   }
-               },4000);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        upLoadData();
+                    }
+                }, 4000);
             }
         }
-
     }
 
     public int isEmptyInput() {
@@ -207,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-
     public void upLoadData() {
 
         int ran = randomAnsers();
@@ -215,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
         question.setTheQuestion(edtQuestion.getText().toString().trim());
 
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy HH:mm:ss");
         String strDate = dateFormat.format(date);
         question.setTime(strDate);
         question.setYesOrNo(ran);
@@ -233,9 +238,17 @@ public class MainActivity extends AppCompatActivity {
         }
         if (ConnectInternet.isOnline()) {
             mDatabase.child("Question").child(listLangues.get(spinner.getSelectedItemPosition()) + "").child(mUsername).push().setValue(question);
-            edtQuestion.setHint(edtQuestion.getText().toString().trim());
-            edtQuestion.setText("");
         }
+        edtQuestion.setHint(edtQuestion.getText().toString().trim());
+        edtQuestion.setText("");
+    }
+
+    private String themDauHoi(String chuoi) {
+        chuoi = chuoi.replace("\\s+", "");
+
+        if (chuoi.charAt(chuoi.length() - 1) == '?')
+            return chuoi;
+        return chuoi + " ?";
     }
 
     public int randomAnsers() {
