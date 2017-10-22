@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
@@ -77,7 +78,7 @@ public class History extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (listQuestion.size() == 0)
                     Toasty.warning(History.this, getResources().getString(R.string.emptyDataHistory), Toast.LENGTH_SHORT).show();
-
+                Collections.reverse(listQuestion);
                 adpterListView = new adpterListView(listQuestion, History.this, R.layout.adapter_history);
                 lvHistory.setAdapter(adpterListView);
                 adpterListView.notifyDataSetChanged();

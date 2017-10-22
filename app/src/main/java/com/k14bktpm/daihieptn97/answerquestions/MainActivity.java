@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,15 +50,15 @@ import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
-    private EditText edtUsename, edtQuestion, edtPassword;
+    private EditText edtQuestion;
     private Button btnSubmit;
-    private TextView tvHistory, tvOthersQuestion;
+    private TextView tvHistory, tvOthersQuestion, tvAnswer;
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private ImageView imgYes, imgNo;
     private Animation animHiddenLeft, animHiddenRight, aniMove, animDelay, animDelayUnder;
     private List<String> listLangues = new ArrayList<>();
     private String mUsername;
-    private InterstitialAd mInterstitialAd;
+    private RelativeLayout layout;
 
 
     @Override
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 onSubmit();
+                // checkQuestion();
                 //  demo();
             }
         });
@@ -123,17 +125,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-//    int i = 0;
-//    private void demo(){
-//        if(i ==0 ) {
-//            imgYes.setVisibility(View.GONE);
-//            i = 1;
-//        }else {
-//            imgYes.setVisibility(View.VISIBLE);
-//            i =0;
-//        }
-//
-//    }
 
     private void onOrtherQuestion() {
 
@@ -155,27 +146,28 @@ public class MainActivity extends AppCompatActivity {
         mUsername = intent.getStringExtra("Username");
     }
 
-    public void onHistory() {
+    private void onHistory() {
         Intent intent = new Intent(MainActivity.this, History.class);
         intent.putExtra("Email", mUsername);
         intent.putExtra("Language", listLangues.get(spinner.getSelectedItemPosition()));
         startActivity(intent);
     }
 
-    public void onSubmit() {
+    private void onSubmit() {
         if (isEmptyInput() == 0) { // kiem tra neu tat ca deu da nhap thi bat dau chay
+
             imgYes.setVisibility(View.VISIBLE);
             imgNo.setVisibility(View.VISIBLE);
-
-
             imgNo.startAnimation(animDelay);
+            imgYes.startAnimation(animDelayUnder);
 
-           imgYes.startAnimation(animDelayUnder);
+
             Handler handler = new Handler();
 
             String cauHoiChuanhoa = edtQuestion.getText().toString().trim(); // chuan hoa chuoi va them dau hoi cuoi cau
             cauHoiChuanhoa = themDauHoi(cauHoiChuanhoa);
             edtQuestion.setText(cauHoiChuanhoa);
+
 
             if (ConnectInternet.isOnline()) {
                 handler.postDelayed(new Runnable() {
@@ -192,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
+
                     }
                 }, 4000);
             } else {
@@ -205,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public int isEmptyInput() {
+    private int isEmptyInput() {
         if (edtQuestion.getText().toString().trim().length() == 0) {
             edtQuestion.setError(getResources().getString(R.string.setErrorQuestion));
             return 1;
@@ -213,16 +206,19 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
-    public void upLoadData() {
+    private void upLoadData() {
 
         int ran = randomAnsers();
         Question question = new Question();
         question.setTheQuestion(edtQuestion.getText().toString().trim());
 
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         String strDate = dateFormat.format(date);
+
         question.setTime(strDate);
+
         question.setYesOrNo(ran);
 
         if (ran == 1) { // kiem tra random va hieu ung an hien img
@@ -244,14 +240,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String themDauHoi(String chuoi) {
-        chuoi = chuoi.replace("\\s+", "");
+        chuoi = chuoi.replaceAll("\\s+", " ");
 
         if (chuoi.charAt(chuoi.length() - 1) == '?')
             return chuoi;
         return chuoi + " ?";
     }
 
-    public int randomAnsers() {
+    private int randomAnsers() {
         Random random = new Random();
         return random.nextInt(2);
     }
@@ -266,35 +262,58 @@ public class MainActivity extends AppCompatActivity {
         if (Locale.getDefault().getLanguage().equals("vi")) {
             spinner.setSelection(1);
         } else spinner.setSelection(0);
-
-
     }
 
-    public void swithLanguage() {
-        String language = spinner.getSelectedItem().toString();
-        String lag;
-        if (language.equals("Tiếng Việt"))
-            lag = "vi";
-        else lag = "en";
 
-        Log.d("my_test", "swithLanguage");
-        Locale myLocale = new Locale(lag);
-        Resources res = getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration conf = res.getConfiguration();
-        conf.locale = myLocale;
-        res.updateConfiguration(conf, dm);
-        Intent refresh = new Intent(this, MainActivity.class);
-        startActivity(refresh);
-        finish();
+    private void checkQuestion() {
+//        imgYes.setVisibility(View.VISIBLE);
+//        imgNo.setVisibility(View.VISIBLE);
+
+        tvAnswer.setVisibility(View.GONE);
+        //layout.setBackground(getResources().getDrawable(R.drawable.background_trang));
+        imgNo.setAlpha(1);
+        imgYes.setAlpha(1);
+        imgNo.startAnimation(animDelay);
+        imgYes.startAnimation(animDelayUnder);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mDatabase.child("cauhoi").child(edtQuestion.getText().toString().trim()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        try { // cau hoi ton tai thi set cau hoi nen man hinh
+                            String a = dataSnapshot.getValue().toString();
+                            imgNo.setAlpha(0);
+                            imgYes.setAlpha(0);
+                            imgYes.setVisibility(View.GONE);
+                            imgNo.setVisibility(View.GONE);
+
+                            layout.setBackground(getResources().getDrawable(R.drawable.background_cautraloi));
+
+                            // Toast.makeText(MainActivity.this, dataSnapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
+                            tvAnswer.setVisibility(View.VISIBLE);
+                            tvAnswer.setText(a);
+                        } catch (Exception e) { //câu hỏi không tồn tại thì set ảnh như bình thường
+                            onSubmit();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }, 4000);
     }
-
 
     private void anhXa() {
         spinner = (Spinner) findViewById(R.id.spLangues);
         edtQuestion = (EditText) findViewById(R.id.edtQuestion);
-        edtUsename = (EditText) findViewById(R.id.edtUsernameLogin);
-        edtPassword = (EditText) findViewById(R.id.edtPasswordLogin);
+//        edtUsename = (EditText) findViewById(R.id.edtUsernameLogin);
+//        edtPassword = (EditText) findViewById(R.id.edtPasswordLogin);
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         tvHistory = (TextView) findViewById(R.id.tvHistory);
         tvOthersQuestion = (TextView) findViewById(R.id.tvOthersQuetion);
@@ -306,6 +325,8 @@ public class MainActivity extends AppCompatActivity {
         aniMove = AnimationUtils.loadAnimation(this, R.anim.anim_move);
         animDelay = AnimationUtils.loadAnimation(this, R.anim.anim_delay);
         animDelayUnder = AnimationUtils.loadAnimation(this, R.anim.anim_delayunder);
+        tvAnswer = (TextView) findViewById(R.id.tvAnswer);
+        layout = (RelativeLayout) findViewById(R.id.layoutCauTraLoi);
 
     }
 

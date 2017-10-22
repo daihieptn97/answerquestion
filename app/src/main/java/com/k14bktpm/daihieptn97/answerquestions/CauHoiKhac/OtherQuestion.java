@@ -48,7 +48,7 @@ public class OtherQuestion extends AppCompatActivity {
     private ListView lvOtherQuestion;
     private SpotsDialog dialog;
     private SwipeRefreshLayout refreshLayout;
-   // private ArrayList<OjectOtherQuseston> listOtherRandom = new ArrayList<>();
+    // private ArrayList<OjectOtherQuseston> listOtherRandom = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,6 @@ public class OtherQuestion extends AppCompatActivity {
         this.setTitle(getString(R.string.tilteOtherQuestion));
 
         dialog.show();
-
 
         LoadDataFirebase();
         Load();
@@ -104,15 +103,19 @@ public class OtherQuestion extends AppCompatActivity {
             @Override
             public void run() {
 
+                if (listOtherQuestion.size() == 0)
+                    Toasty.warning(OtherQuestion.this, getResources().getString(R.string.emptyDataHistory), Toast.LENGTH_SHORT).show();
+
                 Collections.sort(listOtherQuestion, new Comparator<OjectOtherQuseston>() { // sap xep araylist
                     @Override
                     public int compare(OjectOtherQuseston o1, OjectOtherQuseston o2) {
-                        return o2.getThoiGianDang().compareTo(o1.getThoiGianDang());
+                        //return o2.getThoiGianDang().compareTo(o1.getThoiGianDang());
+                        Log.d("day le test", sortTime(o1.getThoiGianDang(), o2.getThoiGianDang()) + "");
+                        return sortTime(o1.getThoiGianDang(), o2.getThoiGianDang()); // goi ham sep xep thoi gian
                     }
                 });
 
-                if (listOtherQuestion.size() == 0)
-                    Toasty.warning(OtherQuestion.this, getResources().getString(R.string.emptyDataHistory), Toast.LENGTH_SHORT).show();
+
                 adpterListView = new adpter_otherQuestion(listOtherQuestion, OtherQuestion.this, R.layout.adapter_other_queston);
                 lvOtherQuestion.setAdapter(adpterListView);
                 adpterListView.notifyDataSetChanged();
@@ -121,17 +124,20 @@ public class OtherQuestion extends AppCompatActivity {
         }, 3000);
     }
 
-
+    private int sortTime(Date o1, Date o2) { // nhằm sắp xếp thời gian
+        if (o1.before(o2)) return 1;
+        return -1;
+    }
 
 
     private void LoadDataFirebase() {
-        Log.d("key firebase ", keyLanguage);
+        // Log.d("key firebase ", keyLanguage);
         mDatabase.child(keyQuestion).child(keyLanguage).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (final DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.d("key firebase :", snapshot.getKey());
+                    //  Log.d("key firebase :", snapshot.getKey());
 
                     mDatabase.child(keyQuestion).child(keyLanguage).child(snapshot.getKey()).addChildEventListener(new ChildEventListener() {
                         @Override
@@ -141,13 +147,14 @@ public class OtherQuestion extends AppCompatActivity {
                             ojectOtherQuseston.setmUsename(snapshot.getKey());
 
                             Date startDate;
-                            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             try {
                                 startDate = df.parse(ojectOtherQuseston.getTime());
                                 ojectOtherQuseston.setThoiGianDang(startDate);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
+
                             listOtherQuestion.add(ojectOtherQuseston);
 
 
